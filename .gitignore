@@ -4,3 +4,4 @@ api_key/
 **/*.pdf
 miaw.json
 other works/
+**/train-v2.0-translated-half.json
