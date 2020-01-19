@@ -1,0 +1,6 @@
+api_key/
+.ipynb_checkpoints/
+**/*.csv
+**/*.pdf
+miaw.json
+other works/
