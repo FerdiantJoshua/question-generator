@@ -1,7 +1,7 @@
 api_key/
+pdfs/
 .ipynb_checkpoints/
 **/*.csv
-**/*.pdf
 miaw.json
 other works/
 **/train-v2.0-translated-half.json
