@@ -1,10 +1,11 @@
 api_key/
-report/
 .ipynb_checkpoints/
 other works/
 
-**/train-v2.0-translated-half.json
+answer_finding*
 
 **/*.txt
 **/*.csv
-miaw.json
+data/raw/**
+data/interim/**
+data/processed/**
