@@ -7,5 +7,13 @@ answer_finding*
 **/*.txt
 **/*.csv
 data/raw/**
+!data/raw/**/raw
 data/interim/**
+!data/interim/**/interim
 data/processed/**
+!data/processed/**/processed
+
+models/checkpoints/**
+models/word-embedding/**
+
+!**/filler
