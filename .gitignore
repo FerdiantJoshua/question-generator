@@ -1,3 +1,5 @@
+env/
+
 api_key/
 .ipynb_checkpoints/
 other works/
