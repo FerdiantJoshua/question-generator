@@ -28,52 +28,29 @@ import torch.nn.functional as F
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-!pip install fuzzywuzzy
-!pip install python-Levenshtein
-!pip install unidecode
-
-"""# Indonesian FastText Downloading and Loading
-
-## Install FastText, and Download Datasets
-"""
-
-# !git clone https://github.com/facebookresearch/fastText.git
-# import os
-# os.chdir('fastText')
-# !pip install .
-# os.chdir('..')
-
-# !wget https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.id.300.bin.gz
-# !gzip -d "cc.id.300.bin.gz"
-# !cp "cc.id.300.bin" "/content/drive/My Drive/TA/FastTextIndonesia/cc.id.300.bin"
-
-# !wget https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.id.zip
-# !unzip wiki.id.zip
-# !cp wiki.id.bin "/content/drive/My Drive/TA/FastTextIndonesia/wiki.id.bin"
-# !cp wiki.id.vec "/content/drive/My Drive/TA/FastTextIndonesia/wiki.id.vec"
-
-
 """## Loads FastText Model"""
 
-model = FastText.load_fasttext_format('../../models/word-embedding/FastTextIndonesia/cc.id.300.bin')
+model = FastText.load_fasttext_format('models/word-embedding/cc.id.300.bin')
 
 EMBEDDING_SIZE = len(model.wv['a'])
 print(EMBEDDING_SIZE)
 print(len(model.wv.vocab))
 
-# print("algoritmatik" in model.wv.vocab)
-# # print(model.wv.most_similar("algoritmatik"))
+print("algoritmatik" in model.wv.vocab)
 
 """# Loading Data"""
 
 # SQUAD_DATASET_PATH = '/content/drive/My Drive/TA/data/processed/train-v2.0-translated_fixed.json'
-SQUAD_DATASET_PATH = '/../..//data/processed/train-v2.0-translated_fixed_enhanced.json'
+SQUAD_DATASET_PATH = 'data/processed/train-v2.0-translated_fixed_enhanced.json'
 
 df_squad = pd.read_json(SQUAD_DATASET_PATH)
 # df_squad = df_squad.drop(columns=['failure_percentage', 'total_questions'])
 print(df_squad.shape)
 print(df_squad)
 
+# TAKEN_DATA_INDEX = 288
+
+# df_squad = df_squad[df_squad.index <= TAKEN_DATA_INDEX]
 print(df_squad.iloc[-1]['paragraphs'][-1].get('entities'))
 print(df_squad.iloc[-1]['paragraphs'][-1].get('postags'))
 
@@ -96,6 +73,23 @@ for taken_topic_idx in range(df_squad.shape[0]):
 print(f'Left: {total_questions}. Deleted: {total_questions_before-total_questions}')
 
 """# Prepare Tensors and Delete Unfound Answers on the Process"""
+
+# print(model.wv.most_similar('adalah'))
+# print(model.wv['∈'])
+# print(model.wv.similarity('buddha', 'pisau'))
+# print(model.wv.similarity('buddha', 'tripitaka'))
+
+# print('frederic' in model.wv.vocab)
+# print(model.wv.most_similar('frederic'))
+# print('frédéric' in model.wv.vocab)
+# print(model.wv.most_similar('frédéric'))
+
+print(model.wv.most_similar('<unk'))
+print(model.wv.most_similar('<sos>'))
+print(model.wv.most_similar('<eos>'))
+print(model.wv.most_similar('<pad>'))
+print(model.wv.most_similar('</sos>'))
+print(model.wv.most_similar('</eos>'))
 
 """## TextDict Class"""
 
@@ -155,6 +149,10 @@ from unidecode import unidecode
 
 def unicode_to_ascii(s):
     return unidecode(s)
+    # return ''.join(
+    #     c for c in unicodedata.normalize('NFD', s)
+    #     if unicodedata.category(c) != 'Mn'
+    # )
 
 non_ascii_regex = re.compile(r"[^\x00-\x7F\u2013]")
 def remove_non_ascii(s):
@@ -179,7 +177,7 @@ tokenize(normalize_string(text))
 
 """### Padding"""
 
-TAKEN_QUANTILE = 0.99
+TAKEN_QUANTILE = 0.99 #@param {type:"number"}
 
 def pad_tensor(tensor, value, length):
     tensor.extend([value for _ in range(length - len(tensor))])
@@ -212,6 +210,21 @@ SENTENCE_MAX_LENGTH, QUESTION_MAX_LENGTH = get_sentence_and_question_max_length(
 QUESTION_MAX_LENGTH += 1    # include EOS_TOKEN
 print(SENTENCE_MAX_LENGTH)
 print(QUESTION_MAX_LENGTH)
+
+# sentence_lengths = []
+# sentences = []
+# for paragraph in df_squad['paragraphs']:
+#     for qas in paragraph:
+#         context_sentences = nltk.tokenize.sent_tokenize(qas['context'])
+#         for sentence in context_sentences:
+#             sentence_lengths.append(len(tokenize(normalize_string(sentence))))
+#             sentences.append(sentence)
+# df_sentence_lengths = pd.DataFrame(sentence_lengths)
+# sentence_lengths_desc = df_sentence_lengths.describe()
+# print(sentence_lengths_desc, end='\n\n')
+
+# idx = df_sentence_lengths[df_sentence_lengths[0]==SENTENCE_MAX_LENGTH]['sentence'].index.tolist()[0]
+# sentences[idx]
 
 """### Answer Preprocessor"""
 
@@ -259,6 +272,49 @@ tokenized_context = tokenize(normalize_string(context))
 answer_idx = 0
 start_idx, end_idx = get_sentence_location_from_answer_word_index(tokenized_context, answer_idx)
 print(' '.join(tokenized_context[start_idx:end_idx+1]))
+
+# for topic in df_squad.iloc[2]['paragraphs']:
+#     print(topic['context'])
+
+# context_idx = 0
+# topic_idx = 0
+# qa_idx = 2
+
+# tokenized_context = tokenize(normalize_string(df_squad.iloc[context_idx]['paragraphs'][topic_idx]['context']))
+# count_tobe_removed_chars = len(re.findall(non_ascii_regex, unicodeToAscii(df_squad.iloc[context_idx]['paragraphs'][topic_idx]['context']))) * 1.5
+# print(count_tobe_removed_chars)
+# qa = df_squad.iloc[context_idx]['paragraphs'][topic_idx]['qas'][qa_idx]
+# indonesian_answer = qa.get('indonesian_answers') or qa.get('indonesian_plausible_answers')
+# answer = indonesian_answer[0]
+# tokenized_words = tokenize(normalize_string(answer['text']))
+# print(df_squad.iloc[context_idx]['paragraphs'][topic_idx]['context'])
+# print(answer['text'])
+# print(tokenized_context)
+# print(tokenized_words)
+# print(qa)
+
+# answer_idx = convert_charloc_to_wordloc(tokenized_context, tokenized_words, answer['answer_start'] - count_tobe_removed_chars)
+
+# print(tokenized_context[answer_idx:answer_idx+len(tokenized_words)])
+# print(tokenized_words)
+
+
+# # def convert_word_to_word_embedding(tokenized_words, model, target_shape, conversion_purpose:str, taken_topic_idx=-1, taken_context_idx=-1, qas_idx=-1):
+# #     tensor = []
+# #     for i in range(len(tokenized_words)):
+# #       try:
+# #           word_embedding = model.wv[tokenized_words[i]]
+# #       except KeyError as e:
+# #           print(f'{conversion_purpose} exception {e} at topic_idx={taken_topic_idx}, taken_context_idx={taken_context_idx}, qas_idx={qas_idx}')
+# #           word_embedding = model.wv[OOV_REPLACEMENT]
+# #       finally:
+# #           tensor.append(word_embedding)
+# #     tensor = np.array(tensor)
+# #     padded_tensor = np.zeros(target_shape)
+# #     padded_tensor[:tensor.shape[0], :tensor.shape[1]] = tensor
+# #     return padded_tensor
+
+# #            input_weights_matrix.append(np.concatenate((context_tensor, answer_tensor), axis=1))
 
 """### NER Preprocessor"""
 
@@ -365,6 +421,19 @@ print(context)
 postags = df_squad.iloc[taken_topic_idx]['paragraphs'][taken_content_idx].get('postags')
 print(postags)
 print(create_postags_tensor(tokenize(normalize_string(context)), postags, postags_textdict))
+
+# results = []
+# for taken_topic_idx in range(df_squad.shape[0]):
+#     for taken_content_idx in range(len(df_squad.iloc[taken_topic_idx]['paragraphs'])):
+#         context = df_squad.iloc[taken_topic_idx]['paragraphs'][taken_content_idx].get('context')
+#         # print(context)
+#         postags = df_squad.iloc[taken_topic_idx]['paragraphs'][taken_content_idx].get('postags')
+#         # print(postags)
+#         # print(create_postags_tensor(tokenize(normalize_string(context)), postags, postags_textdict))
+#         _, result = create_postags_tensor(tokenize(normalize_string(context)), postags, postags_textdict)
+#         results.append(result)
+#         if result < 95:
+#             print(f'{taken_topic_idx}, {taken_content_idx}, {result}')
 
 """## Action!"""
 
@@ -572,6 +641,28 @@ class EncoderRNN(nn.Module):
     def initHidden(self):
         return torch.zeros(1, 1, self.hidden_size, device=device)
 
+"""## Decoder (Unused)"""
+
+# class DecoderRNN(nn.Module):
+#     def __init__(self, weights_matrix, hidden_size, output_size):
+#         super(DecoderRNN, self).__init__()
+#         self.hidden_size = hidden_size
+
+#         self.embedding, _, embedding_dim = create_emb_layer(weights_matrix)
+#         self.lstm = nn.LSTM(embedding_dim, hidden_size)
+#         self.out = nn.Linear(hidden_size, output_size)
+#         self.softmax = nn.LogSoftmax(dim=1)
+
+#     def forward(self, input, hidden):
+#         output = self.embedding(input).view(1, 1, -1)
+#         output = F.relu(output)
+#         output, hidden = self.gru(output, hidden)
+#         output = self.softmax(self.out(output[0]))
+#         return output, hidden
+
+#     def initHidden(self):
+#         return torch.zeros(1, 1, self.hidden_size, device=device)
+
 """## Attention Decoder"""
 
 class AttnDecoderRNN(nn.Module):
@@ -696,7 +787,7 @@ def train(input_tensor, feature_tensor, target_tensor, encoder, decoder, criteri
 
     return loss.item() / di
 
-SAVE_PATH = '../../models/checkpoints/checkpoint_gru.tar'
+SAVE_PATH = 'models/checkpoints/checkpoint_gru.tar'
 N_TAKEN_DATA = input_tensors.size(0)
 
 def create_optimizer(optimizer, parameters, lr, betas=(0.9, 0.999)):
@@ -725,8 +816,10 @@ def trainIters(encoder, decoder, n_epochs, batch_size=1, checkpoint=None, print_
         plot_losses = checkpoint['plot_losses']
         encoder.load_state_dict(checkpoint['encoder_state_dict'])
         encoder_optimizer.load_state_dict(checkpoint['encoder_optimizer_state_dict'])
+        encoder_optimizer.param_groups[0]['lr'] = learning_rate
         decoder.load_state_dict(checkpoint['decoder_state_dict'])
         decoder_optimizer.load_state_dict(checkpoint['decoder_optimizer_state_dict'])
+        decoder_optimizer.param_groups[0]['lr'] = learning_rate
         print_loss_total = checkpoint['loss']
         plot_loss_total = checkpoint['loss']
         # encoder_lr_scheduler.load_state_dict(checkpoint['scheduler'])
@@ -737,12 +830,14 @@ def trainIters(encoder, decoder, n_epochs, batch_size=1, checkpoint=None, print_
     n_iters = N_TAKEN_DATA
 
     prev_epoch = epoch_start = prev_epoch + (prev_iter + 1) // n_iters
-    prev_iter  = iter_start  = (prev_iter + 1) % n_iters
+    prev_iter  = prev_iter % n_iters
+    iter_start = prev_iter + 1
 
     print(f'Starting from epoch-{epoch_start}')
     print(f'Starting from iteration-{iter_start}')
+    print(f'With LR: encoder:{encoder_optimizer.param_groups[0]["lr"]}, decoder:{decoder_optimizer.param_groups[0]["lr"]}')
     for epoch in range(epoch_start, n_epochs + 1):
-        for iter in range(iter_start + 1, n_iters + 1):
+        for iter in range(iter_start, n_iters + 1):
             input_tensor = input_tensors[iter % n_iters]
             feature_tensor = feature_tensors[iter % n_iters]
             target_tensor = target_tensors[iter % n_iters]
@@ -771,7 +866,7 @@ def trainIters(encoder, decoder, n_epochs, batch_size=1, checkpoint=None, print_
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
-                progress_percent = ((epoch-1)*(n_iters)+iter - ((prev_epoch-1)*n_iters+prev_iter)) / (max(1, n_epochs-prev_epoch)*(n_iters-prev_iter))
+                progress_percent = ((epoch-1)*n_iters+iter - ((prev_epoch-1)*n_iters+prev_iter)) / (n_epochs*n_iters - ((prev_epoch-1)*n_iters+prev_iter))
                 print('%s (%d-%d %.2f%%) %.4f' % \
                       (timeSince(start, progress_percent),
                       epoch, iter, progress_percent * 100, print_loss_avg))
@@ -880,13 +975,13 @@ print(output_text)
 
 """# Train & Evaluate"""
 
-LOAD = False #@param {type:"boolean"}
-N_EPOCHS =  1 #@param {type:"integer"}
+LOAD = True #@param {type:"boolean"}
+N_EPOCHS =  20 #@param {type:"integer"}
 BATCH_SIZE = 4 #@param {type:"integer"}
 PRINT_EVERY = 4 #@param {type:"integer"}
 PLOT_EVERY = 20 #@param {type:"integer"}
-SAVE_EVERY = 100 #@param {type:"integer"}
-LEARNING_RATE = 1e-3 #@param {type:"number"}
+SAVE_EVERY =  1000 #@param {type:"integer"}
+LEARNING_RATE = 5e-5 #@param {type:"number"}
 OPTIMIZER = "adam" #@param ["sgd", "adam"]
 # STEP_SCHEDULER = 100 #@param {type:"integer"}
 # RESET_LR_EVERY_N_FRACTION_EPOCHS = 0.5 #@param {type:"number"}
@@ -904,10 +999,18 @@ encoder1 = EncoderRNN(weights_matrix, feature_tensors, hidden_size).to(device)
 attn_decoder1 = AttnDecoderRNN(weights_matrix, hidden_size, text_dict.n_words, dropout_p=0.1).to(device)
 
 history = trainIters(encoder1, attn_decoder1, n_epochs=N_EPOCHS, batch_size=BATCH_SIZE, checkpoint=checkpoint, print_every=PRINT_EVERY, plot_every=PLOT_EVERY, save_every=SAVE_EVERY, learning_rate=LEARNING_RATE, optimizer=OPTIMIZER)
-showPlot(history)
+showPlot(history, save=True)
 
-# !cp "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru.tar" "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru_50epochs_4206data.tar"
-# !cp "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru_15epochs_4204data.tar" "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru.tar"
+# plot = checkpoint['plot_losses']
+# showPlot(plot, save=True)
+
+# encoder_optimizer = create_optimizer('adam', encoder1.parameters(), lr=1e-10)
+# encoder_optimizer.load_state_dict(checkpoint['encoder_optimizer_state_dict'])
+# encoder_optimizer.param_groups[0]['lr'] = 1e-10
+# encoder_optimizer.param_groups[0]['lr']
+
+# !cp "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru.tar" "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru_1epochs_116609data_2.tar"
+# !cp "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru_1epochs_116609data_2.tar" "/content/drive/My Drive/TA/Checkpoints/checkpoint_gru.tar"
 
 evaluateRandomly(encoder1, attn_decoder1)
 
@@ -929,4 +1032,48 @@ for i in range(0, min(100, N_TAKEN_DATA)):
     output_sentence = ' '.join(output_words)
     print('<', output_sentence)
     print()
-    
+
+"""## Visualize Attention"""
+
+# output_words, attentions = evaluate(
+#     encoder1, attn_decoder1, "je suis trop froid .")
+# plt.matshow(attentions.numpy())
+
+"""For a better viewing experience we will do the extra work of adding axes
+and labels:
+"""
+
+# def showAttention(input_sentence, output_words, attentions):
+#     # Set up figure with colorbar
+#     fig = plt.figure()
+#     ax = fig.add_subplot(111)
+#     cax = ax.matshow(attentions.numpy(), cmap='bone')
+#     fig.colorbar(cax)
+
+#     # Set up axes
+#     ax.set_xticklabels([''] + input_sentence.split(' ') +
+#                        ['<EOS>'], rotation=90)
+#     ax.set_yticklabels([''] + output_words)
+
+#     # Show label at every tick
+#     ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
+#     ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
+
+#     plt.show()
+
+
+# def evaluateAndShowAttention(input_sentence):
+#     output_words, attentions = evaluate(
+#         encoder1, attn_decoder1, input_sentence)
+#     print('input =', input_sentence)
+#     print('output =', ' '.join(output_words))
+#     showAttention(input_sentence, output_words, attentions)
+
+
+# evaluateAndShowAttention("elle a cinq ans de moins que moi .")
+
+# evaluateAndShowAttention("elle est trop petit .")
+
+# evaluateAndShowAttention("je ne crains pas de mourir .")
+
+# evaluateAndShowAttention("c est un jeune directeur plein de talent .")
