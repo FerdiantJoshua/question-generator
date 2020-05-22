@@ -1,5 +1,6 @@
 import argparse
-from os.path import dirname, exists
+import platform
+from os.path import dirname
 from os import system
 import pandas as pd
 import sys
@@ -37,6 +38,11 @@ def main():
         help='Boolean parameter to lower the dataset (and add case feature) or not',
     )
     parser.add_argument(
+        '--no_feature',
+        action='store_true',
+        help='Boolean parameter to omit the additional features or not',
+    )
+    parser.add_argument(
         '--src_max_len',
         default='60',
         type=int,
@@ -68,6 +74,7 @@ def main():
     print('Test')
     delete_unfound_answers(df_squad_test)
 
+    print('Preprocessing...')
     inputs, features, targets = do_preprocess(df_squad, args.lower, args.src_max_len, args.tgt_max_len)
     inputs_test, features_test, targets_test = do_preprocess(df_squad_test, args.lower, args.src_max_len, args.tgt_max_len)
 
@@ -76,22 +83,32 @@ def main():
     print('Train feature shape:', features.shape)
     print('Val feature shape:', features_val.shape)
 
-    file_name = 'squad_id_uncased' if args.lower else 'squad_id_cased'
+    file_name = 'squad_id'
+    file_name += '_plain' if args.no_feature else ''
+    file_name += '_uncased' if args.lower else '_cased'
+    dir_name = 'processed'
     create_data_file([(inputs, features, targets), (inputs_val, features_val, targets_val),
-                      (inputs_test, features_test, targets_test)], dir_name='onmt', file_name=file_name,
-                     lower=args.lower)
-    print('Train data')
-    system(f'wc -l data/onmt/train/{file_name}_source.txt')
-    print()
-    system(f'head -5 data/onmt/train/{file_name}_source.txt')
-    print()
-    system(f'head -5 data/onmt/train/{file_name}_target.txt')
-    print('\nTest data')
-    system(f'wc -l data/onmt/test/{file_name}_source.txt')
-    print()
-    system(f'head -5 data/onmt/test/{file_name}_source.txt')
-    print()
-    system(f'head -5 data/onmt/test/{file_name}_target.txt')
+                      (inputs_test, features_test, targets_test)], dir_name=dir_name, file_name=file_name,
+                     print_features=not args.no_feature, lower=args.lower)
+    if platform.system() != 'Windows':
+        print('Train data')
+        system(f'wc -l data/{dir_name}/train/{file_name}_source.txt')
+        print()
+        system(f'head -3 data/{dir_name}/train/{file_name}_source.txt')
+        print()
+        system(f'head -3 data/{dir_name}/train/{file_name}_target.txt')
+        print('\nVal data')
+        system(f'wc -l data/{dir_name}/val/{file_name}_source.txt')
+        print()
+        system(f'head -3 data/{dir_name}/val/{file_name}_source.txt')
+        print()
+        system(f'head -3 data/{dir_name}/val/{file_name}_target.txt')
+        print('\nTest data')
+        system(f'wc -l data/{dir_name}/test/{file_name}_source.txt')
+        print()
+        system(f'head -3 data/{dir_name}/test/{file_name}_source.txt')
+        print()
+        system(f'head -3 data/{dir_name}/test/{file_name}_target.txt')
 
 if __name__ == '__main__':
     main()

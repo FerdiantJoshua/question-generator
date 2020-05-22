@@ -32,8 +32,7 @@ def do_preprocess(df_squad, lower=False, sentence_max_length=SENTENCE_MAX_LENGTH
                 entities = df_squad.iloc[taken_topic_idx]['paragraphs'][taken_context_idx]['entities']
                 postags = df_squad.iloc[taken_topic_idx]['paragraphs'][taken_context_idx]['postags']
             except KeyError:
-                print(f'Key Error, skipped ({taken_topic_idx}, {taken_context_idx})')
-                i += 1
+                print(f'Entities/postags not found, (topic:{taken_topic_idx}, context:{taken_context_idx})')
                 continue
             entities = create_ner_tensor(tokenized_context, entities, None, return_in_tensor=False)
             postags = create_postags_tensor(tokenized_context, postags, None, return_in_tensor=False)
@@ -48,7 +47,7 @@ def do_preprocess(df_squad, lower=False, sentence_max_length=SENTENCE_MAX_LENGTH
                 answer_start = indonesian_answer[0]['answer_start'] - count_tobe_removed_chars
                 answer_idx = convert_charloc_to_wordloc(tokenized_context, tokenized_answers, answer_start)
                 if answer_idx < 0:
-                    print(f'Not found at topic_idx={taken_topic_idx}, taken_context_idx={taken_context_idx}, qas_idx={i}')
+                    print(f'Not found, (topic:{taken_topic_idx}, context:{taken_context_idx}, qas:{i})')
                     deleted += 1
                     qas.pop(i)
                     continue
@@ -56,7 +55,7 @@ def do_preprocess(df_squad, lower=False, sentence_max_length=SENTENCE_MAX_LENGTH
                 sent_start_idx, sent_end_idx = get_sentence_location_from_answer_word_index(tokenized_context, answer_idx)
                 tokenized_sentence = tokenized_context[sent_start_idx:sent_end_idx+1]
                 if sent_end_idx-sent_start_idx+1 > sentence_max_length:
-                    # print(f'Sentence too long, skipped ({taken_topic_idx}, {taken_content_idx})')
+                    # print(f'Sentence too long, (topic:{taken_topic_idx}, context:{taken_content_idx})')
                     i += 1
                     continue
 
@@ -80,7 +79,7 @@ def do_preprocess(df_squad, lower=False, sentence_max_length=SENTENCE_MAX_LENGTH
                 indonesian_question = qa['question']
                 tokenized_questions = tokenize(normalize_string(indonesian_question))
                 if len(tokenized_questions) > question_max_length-2:
-                    # print(f'Question too long, skipped ({taken_topic_idx}, {taken_content_idx})')
+                    # print(f'Question too long, skipped (topic:{taken_topic_idx}, context:{taken_content_idx})')
                     i += 1
                     continue
 

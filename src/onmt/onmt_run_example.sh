@@ -1,8 +1,8 @@
 #================================================== PREPROCESS ==================================================
-onmt_preprocess -train_src 'data/onmt/train/squad_id_cased_source.txt' -train_tgt 'data/onmt/train/squad_id_cased_target.txt' \
-    -valid_src 'data/onmt/val/squad_id_cased_source.txt' -valid_tgt 'data/onmt/val/squad_id_cased_target.txt' \
+onmt_preprocess -train_src 'data/processed/train/squad_id_cased_source.txt' -train_tgt 'data/processed/train/squad_id_cased_target.txt' \
+    -valid_src 'data/processed/val/squad_id_cased_source.txt' -valid_tgt 'data/processed/val/squad_id_cased_target.txt' \
     -dynamic_dict \
-    -save_data 'data/onmt/squad_id_cased' \
+    -save_data 'data/processed/onmt/squad_id_cased' \
     -overwrite \
     -src_vocab_size 50000 \
     -tgt_vocab_size 30000 \
@@ -11,17 +11,17 @@ onmt_preprocess -train_src 'data/onmt/train/squad_id_cased_source.txt' -train_tg
 
 #================================================== EMBEDDING ==================================================
 python src/onmt/embeddings_to_torch.py -emb_file_both 'models/word-embedding/ft_to_gl_300_id.vec' \
-    -dict_file 'data/onmt/squad_id_cased.vocab.pt' \
-    -output_file 'data/onmt/embeddings_cased'
+    -dict_file 'data/processed/onmt/squad_id_cased.vocab.pt' \
+    -output_file 'data/processed/embeddings_cased'
 
 #================================================== TRAIN ==================================================
 #-------------------------------------------------- RNN --------------------------------------------------
-onmt_train -data 'data/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt/lstm_011' \
+onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt/lstm_011' \
     -world_size 4 -gpu_ranks 0 1 2 3 \
     -save_checkpoint_steps 7195 \
     -word_vec_size 300 \
-    -pre_word_vecs_enc 'data/onmt/embeddings_cased.enc.pt' \
-    -pre_word_vecs_dec 'data/onmt/embeddings_cased.dec.pt' \
+    -pre_word_vecs_enc 'data/processed/embeddings_cased.enc.pt' \
+    -pre_word_vecs_dec 'data/processed/embeddings_cased.dec.pt' \
     -fix_word_vecs_enc \
     -fix_word_vecs_dec \
     -keep_checkpoint 5 \
@@ -40,10 +40,10 @@ onmt_train -data 'data/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt
     -batch_size 64 \
     -dropout 0.3
 #-------------------------------------------------- TRANSFORMER --------------------------------------------------
-onmt_train -data 'data/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt/transformer_004' \
+onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt/transformer_004' \
     -world_size 1 -gpu_ranks 0 \
-    -pre_word_vecs_enc 'data/onmt/embeddings_cased.enc.pt' \
-    -pre_word_vecs_dec 'data/onmt/embeddings_cased.dec.pt' \
+    -pre_word_vecs_enc 'data/processed/onmt/embeddings_cased.enc.pt' \
+    -pre_word_vecs_dec 'data/processed/onmt/embeddings_cased.dec.pt' \
     -fix_word_vecs_enc \
     -fix_word_vecs_dec \
     -feat_merge mlp \
@@ -61,6 +61,6 @@ onmt_train -data 'data/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt
 
 #================================================== TRANSLATE ==================================================
 !onmt_translate -model 'models/checkpoints/onmt/lstm_001_step_35975.pt' \
-    -src 'data/onmt/test/squad_id_cased_source.txt' -output 'reports/onmt/pred.txt' -replace_unk -verbose \
+    -src 'data/processed/test/squad_id_cased_source.txt' -output 'reports/onmt/pred.txt' -replace_unk -verbose \
     -beam_size 5 \
     -max_length 22
