@@ -51,7 +51,6 @@ def main():
         help='Max length of source input',
     )
     args = parser.parse_args()
-    assert exists(args.embedding_file), f'Embedding file at {args.embedding_file} is not found'
 
     squad_train_dataset_path = f'{BASE_PATH}data/processed/train-v2.0-translated_fixed_enhanced.json'
     squad_test_dataset_path = f'{BASE_PATH}data/processed/dev-v2.0-translated_fixed_enhanced.json'
@@ -82,17 +81,17 @@ def main():
                       (inputs_test, features_test, targets_test)], dir_name='onmt', file_name=file_name,
                      lower=args.lower)
     print('Train data')
-    system(f'wc -l data/train/{file_name}_source.txt')
+    system(f'wc -l data/onmt/train/{file_name}_source.txt')
     print()
-    system(f'head -5 data/train/{file_name}_source.txt')
+    system(f'head -5 data/onmt/train/{file_name}_source.txt')
     print()
-    system(f'head -5 data/train/{file_name}_target.txt')
+    system(f'head -5 data/onmt/train/{file_name}_target.txt')
     print('\nTest data')
-    system(f'wc -l data/test/{file_name}_source.txt')
+    system(f'wc -l data/onmt/test/{file_name}_source.txt')
     print()
-    system(f'head -5 data/test/{file_name}_source.txt')
+    system(f'head -5 data/onmt/test/{file_name}_source.txt')
     print()
-    system(f'head -5 data/test/{file_name}_target.txt')
+    system(f'head -5 data/onmt/test/{file_name}_target.txt')
 
 if __name__ == '__main__':
     main()
