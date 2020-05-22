@@ -16,9 +16,6 @@ MODEL_CLASSES = {
     'xlm': XLMTokenizer,
 }
 
-LANGUAGE_LIST = (
-    ('merged', 'contexts_questions'),
-)
 VOCAB_SIZE = 52000
 MIN_FREQUENCY = 2
 
@@ -59,7 +56,14 @@ if __name__ == '__main__':
         default=None,
         type=str,
         required=True,
-        help='Resource directory path. e.g.: train, test, etc)',
+        help='Resource directory path. (e.g.: ./data/processed/tokenizer/merged)',
+    )
+    parser.add_argument(
+        '--language_name',
+        default=None,
+        type=str,
+        required=True,
+        help='Language name (the tokenizer will be saved under ./models/tokenizer/{TOKENIZER/MODEL TYPE}/language_name',
     )
     parser.add_argument(
         '--tokenizer_type',
@@ -67,7 +71,7 @@ if __name__ == '__main__':
         type=str,
         choices=TOKENIZER_CLASSES,
         required=True,
-        help='Tokenizer type (directories will be created with this name',
+        help='Tokenizer type',
     )
     parser.add_argument(
         '--model_type',
@@ -75,18 +79,21 @@ if __name__ == '__main__':
         type=str,
         choices=MODEL_CLASSES,
         required=True,
-        help='Model type selected',
+        help='Transformer model which will use this tokenizer',
     )
     args = parser.parse_args()
 
-    RESOURCE_DIR = f'./data/processed/tokenizer/{args.resource_dir}'
     BASIC_TOKENIZER_ROOT_DIR = f'./models/tokenizer/{args.tokenizer_type}'
     MODEL_TOKENIZER_ROOT_DIR = f'./models/tokenizer/{args.model_type}'
 
+    LANGUAGE_LIST = (
+        ('merged', 'contexts_questions'),
+    )
     for language in LANGUAGE_LIST:
         print(f'Training tokenizer for language: {language[1]} (as {language[0]})')
-        paths = [str(x) for x in Path(f'{RESOURCE_DIR}/{language[0]}').glob('**/*.txt')]
+        paths = [str(x) for x in Path(args.resource_dir).glob('**/*.txt')]
         print(paths)
+        assert paths, 'No file founds in paths'
         basic_tokenizer = TOKENIZER_CLASSES[args.tokenizer_type]()
         basic_tokenizer.train(files=paths, vocab_size=VOCAB_SIZE, min_frequency=MIN_FREQUENCY, special_tokens=[
             '<s>',

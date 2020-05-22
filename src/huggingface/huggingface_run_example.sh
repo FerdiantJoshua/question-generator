@@ -11,7 +11,8 @@ python src/huggingface/prepare_data.py --train_src='data/processed/train/squad_i
     --add_special_token
 
 #================================================== TOKENIZER ==================================================
-python src/huggingface/train_tokenizer.py --resource_dir='merged' \
+python src/huggingface/train_tokenizer.py --resource_dir='data/processed/tokenizer/merged' \
+    --language_name='contexts_questions' \
     --tokenizer_type='byte_bpe' \
     --model_type='gpt2'
 

@@ -60,7 +60,11 @@ onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkp
     -coverage_attn
 
 #================================================== TRANSLATE ==================================================
-!onmt_translate -model 'models/checkpoints/onmt/lstm_001_step_35975.pt' \
-    -src 'data/processed/test/squad_id_cased_source.txt' -output 'reports/onmt/pred.txt' -replace_unk -verbose \
+onmt_translate -model 'models/checkpoints/onmt/transformer_004_step_54000.pt' \
+    -src 'data/processed/test/squad_id_cased_source.txt' -output 'reports/onmt/pred.txt' -replace_unk \
     -beam_size 5 \
-    -max_length 22
+    -max_length 22 \
+    -verbose
+
+#================================================== EVALUATE ==================================================
+python src/onmt/evaluate.py

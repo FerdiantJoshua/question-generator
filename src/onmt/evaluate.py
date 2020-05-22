@@ -61,14 +61,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--source_file',
-        default='data/onmt/test/squad_id_cased_source.txt',
+        default='data/processed/test/squad_id_cased_source.txt',
         type=str,
         required=False,
         help='Source file containing original input, each data are separated by line',
     )
     parser.add_argument(
         '--target_file',
-        default='data/onmt/test/squad_id_cased_target.txt',
+        default='data/processed/test/squad_id_cased_target.txt',
         type=str,
         required=False,
         help='Target file containing ground truth values, each data are separated by line',
@@ -92,4 +92,5 @@ if __name__ == '__main__':
     nlgeval = NLGEval(metrics_to_omit=['CIDEr', 'EmbeddingAverageCosineSimilairty', 'EmbeddingAverageCosineSimilarity',
                                        'GreedyMatchingScore', 'SkipThoughtCS',
                                        'VectorExtremaCosineSimilarity'])
-    merge_and_print_to_file(args.source_file, args.target_file, args.prediction_file, args.log_file, nlgeval)
+    averaged_eval = merge_and_print_to_file(args.source_file, args.target_file, args.prediction_file, args.log_file, nlgeval)
+    print(averaged_eval)

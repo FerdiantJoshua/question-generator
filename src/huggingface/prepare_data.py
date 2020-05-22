@@ -52,20 +52,24 @@ if __name__ == '__main__':
         help='Test target file (e.g.: ./data/processed/test/squad_id_cased_source.txt)',
     )
     parser.add_argument(
+        '--save_dir_root',
+        default='./data/processed/huggingface',
+        type=str,
+        required=False,
+        help='Save dir root file (e.g.: ./data/processed/huggingface)',
+    )
+    parser.add_argument(
         '--add_special_tokens',
         action='store_true',
         help='Boolean parameter to add special tokens (<s>, <sep>, </s>) or not',
     )
     args = parser.parse_args()
 
-    DATASET_DIR_ROOT = './dataset/processed'
-    SAVE_DIR_ROOT = './dataset/processed/huggingface'
-
     data_path_tuples = [('train', args.train_src, args.train_tgt),
                         ('val', args.valid_src, args.valid_tgt),
                         ('test', args.test_src, args.test_tgt)]
     for data_path_tuple in data_path_tuples:
-        save_dir = f'{SAVE_DIR_ROOT}/{data_path_tuple[0]}'
+        save_dir = f'{args.save_dir_root}/{data_path_tuple[0]}'
         print(f'Data are saved in {save_dir}')
         os.makedirs(save_dir, exist_ok=True)
         source_data = file_handler.load_txt(data_path_tuple[1])

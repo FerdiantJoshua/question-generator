@@ -26,7 +26,7 @@ def load_context_and_question(df_squad):
                 questions.append(tokenize(normalize_string(question)))
                 i += 1
                 j += 1
-                if j % 10000 == 0: print(f'{j}: {time.time() - start_time}')
+                if j % 10000 == 0: print(f'{j:04d}: {time.time() - start_time}s')
     return contexts, questions
 
 
