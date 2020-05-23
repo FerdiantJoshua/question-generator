@@ -2,9 +2,28 @@ import argparse
 import os
 from os.path import dirname
 import sys
+
 sys.path.insert(1, dirname(dirname(sys.path[0])))
 
+from src.util.file_handler import FEAT_SEP
 from src.util import file_handler
+
+
+def extract_token_feature(data, return_answer=True):
+    data = data.split()
+    if len(data[0].split(FEAT_SEP)) < 2:
+        if return_answer:
+            raise ValueError('Data doesn\'t contain additional features. please set --no_answer_feature for this type of dataset')
+        else:
+            return data, None
+    context = []
+    answer = []
+    for features in data:
+        features = features.split(FEAT_SEP)
+        context.append(features[0])
+        if int(features[1]):
+            answer.append(features[0])
+    return context, answer
 
 
 if __name__ == '__main__':
@@ -59,6 +78,11 @@ if __name__ == '__main__':
         help='Save dir root file (e.g.: ./data/processed/huggingface)',
     )
     parser.add_argument(
+        '--no_answer_feature',
+        action='store_true',
+        help='Boolean parameter to add answer feature or not',
+    )
+    parser.add_argument(
         '--add_special_tokens',
         action='store_true',
         help='Boolean parameter to add special tokens (<s>, <sep>, </s>) or not',
@@ -80,8 +104,17 @@ if __name__ == '__main__':
         save_file_name = 'sentence_pairs_spec_tokens.txt' if args.add_special_tokens else 'sentence_pairs.txt'
         with open(f'{save_dir}/{save_file_name}', 'w') as f_out:
             for i in range(len(source_data)):
-                if source_data[i].strip():
+                if not source_data[i].strip():
+                    continue
+
+                src_context, src_answer = extract_token_feature(source_data[i].strip(), not args.no_answer_feature)
+                if args.no_answer_feature:
                     if args.add_special_tokens:
-                        f_out.write(f'<s> {source_data[i].strip()} <sep> {target_data[i].strip()} </s>\n')
+                        f_out.write(f'<s> {" ".join(src_context)} <sep> {target_data[i].strip()} </s>\n')
                     else:
-                        f_out.write(f'{source_data[i].strip()} \t {target_data[i].strip()}\n')
+                        f_out.write(f'{" ".join(src_context)}\t{target_data[i].strip()}\n')
+                else:
+                    if args.add_special_tokens:
+                        f_out.write(f'<s> {" ".join(src_context)} <sep> {" ".join(src_answer)} <sep> {target_data[i].strip()} </s>\n')
+                    else:
+                        f_out.write(f'{" ".join(src_context)}\t{" ".join(src_answer)}\t{target_data[i].strip()}\n')

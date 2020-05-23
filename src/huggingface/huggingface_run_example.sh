@@ -1,10 +1,11 @@
 #================================================== PREPROCESS ==================================================
-python src/huggingface/prepare_data.py --train_src='data/processed/train/squad_id_plain_cased_source.txt' \
-    --train_tgt='data/processed/train/squad_id_plain_cased_target.txt' \
-    --valid_src='data/processed/val/squad_id_plain_cased_source.txt' \
-    --valid_tgt='data/processed/val/squad_id_plain_cased_target.txt' \
-    --test_src='data/processed/test/squad_id_plain_cased_source.txt' \
-    --test_tgt='data/processed/test/squad_id_plain_cased_target.txt' \
+python src/huggingface/prepare_data.py \
+    --train_src='data/processed/train/squad_id_cased_source.txt' \
+    --train_tgt='data/processed/train/squad_id_cased_target.txt' \
+    --valid_src='data/processed/val/squad_id_cased_source.txt' \
+    --valid_tgt='data/processed/val/squad_id_cased_target.txt' \
+    --test_src='data/processed/test/squad_id_cased_source.txt' \
+    --test_tgt='data/processed/test/squad_id_cased_target.txt' \
     --add_special_token
 
 #================================================== TRAIN TOKENIZER ==================================================

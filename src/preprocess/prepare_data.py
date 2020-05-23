@@ -33,6 +33,20 @@ def delete_unfound_answers(df_squad):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        '--train_squad_path',
+        default='data/processed/train-v2.0-translated_fixed_enhanced.json',
+        type=str,
+        required=False,
+        help='Train squad data path',
+    )
+    parser.add_argument(
+        '--dev_squad_path',
+        default='data/processed/dev-v2.0-translated_fixed_enhanced.json',
+        type=str,
+        required=False,
+        help='Dev squad data path',
+    )
+    parser.add_argument(
         '--lower',
         action='store_true',
         help='Boolean parameter to lower the dataset (and add case feature) or not',
@@ -58,8 +72,8 @@ def main():
     )
     args = parser.parse_args()
 
-    squad_train_dataset_path = f'{BASE_PATH}data/processed/train-v2.0-translated_fixed_enhanced.json'
-    squad_test_dataset_path = f'{BASE_PATH}data/processed/dev-v2.0-translated_fixed_enhanced.json'
+    squad_train_dataset_path = args.train_squad_path
+    squad_test_dataset_path = args.dev_squad_path
 
     df_squad = pd.read_json(squad_train_dataset_path)
     df_squad_test = pd.read_json(squad_test_dataset_path)
