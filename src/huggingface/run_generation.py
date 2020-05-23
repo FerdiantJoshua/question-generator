@@ -175,6 +175,11 @@ def main():
         help="number of beams used in beam search decoding",
     )
     parser.add_argument(
+        "--do_sample",
+        action='store_true',
+        help="enable sampling in generation",
+    )
+    parser.add_argument(
         "--no_repeat_ngram_size",
         type=int,
         default=None,
@@ -247,7 +252,7 @@ def main():
             top_k=args.k,
             top_p=args.p,
             repetition_penalty=args.repetition_penalty,
-            do_sample=False,
+            do_sample=args.do_sample,
             no_repeat_ngram_size=args.no_repeat_ngram_size,
             num_return_sequences=args.num_return_sequences,
         )
