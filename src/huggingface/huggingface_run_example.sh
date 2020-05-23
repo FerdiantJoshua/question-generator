@@ -25,7 +25,7 @@ with open('models/tokenizer/gpt2/contexts_questions/config.json', 'w') as f:
     json.dump(GPT2Config().to_dict(), f)
 
 #-------------------------------------------------- COPY FROM EXISTING --------------------------------------------------
-cp 'src/huggingface/config_example/config_gpt2.example.json' 'models/tokenizer/gpt2/contexts_questions/config.json'
+cp 'src/huggingface/config_examples/config_gpt2.example.json' 'models/tokenizer/gpt2/contexts_questions/config.json'
 
 #================================================== TRAIN ==================================================
 #-------------------------------------------------- GPT2 --------------------------------------------------
@@ -41,7 +41,7 @@ python src/huggingface/run_language_modeling.py \
     --do_eval \
     --eval_data_file='data/processed/huggingface/val/sentence_pairs_spec_tokens.txt' \
     --per_gpu_train_batch_size 4 \
-    --num_train_epochs 3.0 \
+    --num_train_epochs 15.0 \
     --block_size 128
 
 # .................................................. TO CONTINUE TRAINING ..................................................

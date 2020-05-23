@@ -37,7 +37,7 @@
   "decoder_start_token_id": null,
   "task_specific_params": null,
   "xla_device": null,
-  "vocab_size": 50257,
+  "vocab_size": 52000,
   "n_ctx": 1024,
   "n_positions": 1024,
   "n_embd": 768,

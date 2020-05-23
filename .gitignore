@@ -6,6 +6,8 @@ other works/
 
 answer_finding*
 
+**/__pycache__/
+
 **/*.txt
 **/*.csv
 data/raw/**
@@ -15,7 +17,7 @@ data/interim/**
 data/processed/**
 !data/processed/**/processed
 
-models/checkpoints/**
-models/word-embedding/**
+/models/
+!/models/final
 
 !**/filler
