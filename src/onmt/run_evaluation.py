@@ -77,7 +77,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--prediction_file',
-        default='reports/onmt/pred.txt',
+        default='reports/txts/onmt/pred.txt',
         type=str,
         required=False,
         help='Prediction file containing model predictions, each data are separated by line',

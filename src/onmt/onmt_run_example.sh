@@ -71,14 +71,14 @@ onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkp
 
 #================================================== TRANSLATE ==================================================
 onmt_translate -model 'models/checkpoints/onmt/lstm_013_step_35975.pt' \
-    -src 'data/processed/test/squad_id_cased_source.txt' -output 'reports/onmt/pred_lstm_013_step_35975.txt' -replace_unk \
+    -src 'data/processed/test/squad_id_cased_source.txt' -output 'reports/txts/onmt/pred_lstm_013_step_35975.txt' -replace_unk \
     -beam_size 5 \
     -max_length 22 \
     -verbose
 
 #================================================== EVALUATE ==================================================
 python src/onmt/run_evaluation.py \
-    --prediction_file='reports/onmt/pred_lstm_013_step_35975.txt' \
+    --prediction_file='reports/txts/onmt/pred_lstm_013_step_35975.txt' \
     --log_file='reports/txts/onmt/eval_log_lstm_013_step_35975.txt'
 
 #================================================== FREE INFERENCE ==================================================
