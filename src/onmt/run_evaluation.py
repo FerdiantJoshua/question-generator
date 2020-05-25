@@ -16,11 +16,13 @@ def calculate_eval_score(nlgeval, references, hypothesis, ndigits=4):
     result_dict['Bleu_avg'] = (result_dict['Bleu_1'] + result_dict['Bleu_2'] + result_dict['Bleu_3'] + result_dict['Bleu_4'])/4
     return result_dict
 
+
 def dict_mean(dict_list):
     mean_dict = {}
     for key in dict_list[0].keys():
         mean_dict[key] = round(sum(d[key] for d in dict_list) / len(dict_list), 4)
     return mean_dict
+
 
 def merge_and_print_to_file(src_file, tgt_file, pred_file, output_log_file, nlgeval):
     with open(src_file, 'r') as f_in:

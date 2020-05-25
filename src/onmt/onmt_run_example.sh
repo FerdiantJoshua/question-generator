@@ -1,3 +1,13 @@
+echo "This shell example is not intended to be executed. Please read and use all the provided commands in this file manually."
+exit 1
+
+# If you do not wish to use copy and coverage mechanism, remove these lines:
+# PREPROCESS:
+    -dynamic_dict
+# TRAIN:
+    -copy_attn \
+    -copy_attn_force \
+    -coverage_attn
 #================================================== PREPROCESS ==================================================
 onmt_preprocess -train_src 'data/processed/train/squad_id_cased_source.txt' -train_tgt 'data/processed/train/squad_id_cased_target.txt' \
     -valid_src 'data/processed/val/squad_id_cased_source.txt' -valid_tgt 'data/processed/val/squad_id_cased_target.txt' \
@@ -16,8 +26,8 @@ python src/onmt/embeddings_to_torch.py -emb_file_both 'models/word-embedding/ft_
 
 #================================================== TRAIN ==================================================
 #-------------------------------------------------- RNN --------------------------------------------------
-onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt/lstm_011' \
-    -world_size 4 -gpu_ranks 0 1 2 3 \
+onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt/lstm_013' \
+    -world_size 1 -gpu_ranks 0 \
     -save_checkpoint_steps 7195 \
     -word_vec_size 300 \
     -pre_word_vecs_enc 'data/processed/embeddings_cased.enc.pt' \
@@ -32,13 +42,13 @@ onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkp
     -layers 2 \
     -global_attention general \
     -rnn_size 600 \
-    -copy_attn \
-    -copy_attn_force \
-    -coverage_attn \
     -train_steps 35975 \
     -valid_steps 2878 \
     -batch_size 64 \
-    -dropout 0.3
+    -dropout 0.3 \
+    -copy_attn \
+    -copy_attn_force \
+    -coverage_attn
 #-------------------------------------------------- TRANSFORMER --------------------------------------------------
 onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkpoints/onmt/transformer_004' \
     -world_size 1 -gpu_ranks 0 \
@@ -60,11 +70,19 @@ onmt_train -data 'data/processed/onmt/squad_id_cased' -save_model 'models/checkp
     -coverage_attn
 
 #================================================== TRANSLATE ==================================================
-onmt_translate -model 'models/checkpoints/onmt/transformer_004_step_54000.pt' \
-    -src 'data/processed/test/squad_id_cased_source.txt' -output 'reports/onmt/pred.txt' -replace_unk \
+onmt_translate -model 'models/checkpoints/onmt/lstm_013_step_35975.pt' \
+    -src 'data/processed/test/squad_id_cased_source.txt' -output 'reports/onmt/pred_lstm_013_step_35975.txt' -replace_unk \
     -beam_size 5 \
     -max_length 22 \
     -verbose
 
 #================================================== EVALUATE ==================================================
-python src/onmt/evaluate.py
+python src/onmt/run_evaluation.py \
+    --prediction_file='reports/onmt/pred_lstm_013_step_35975.txt' \
+    --log_file='reports/txts/onmt/eval_log_lstm_013_step_35975.txt'
+
+#================================================== FREE INFERENCE ==================================================
+python src/onmt/run_free_generation.py \
+    --preprocess_output_path='reports/txts/onmt/free_input.txt' \
+    --model_path='models/checkpoints/onmt/lstm_013_step_35975.pt' \
+    --manual_ne_postag
