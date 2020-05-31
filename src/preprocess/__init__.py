@@ -108,8 +108,9 @@ def do_preprocess(df_squad, lower=False, sentence_max_length=SENTENCE_MAX_LENGTH
     return inputs, features, targets
 
 
-def shuffle(*args):
+def shuffle(*args, seed=42):
     indices = np.arange(args[0].shape[0])
+    np.random.seed(seed)
     np.random.shuffle(indices)
     result = []
     for i in range(len(args)):

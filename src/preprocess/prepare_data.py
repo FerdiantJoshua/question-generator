@@ -47,6 +47,13 @@ def main():
         help='Dev squad data path',
     )
     parser.add_argument(
+        '--train_val_split',
+        default=0.8,
+        type=float,
+        required=False,
+        help='Split percentage between training and validation data',
+    )
+    parser.add_argument(
         '--lower',
         action='store_true',
         help='Boolean parameter to lower the dataset (and add case feature) or not',
@@ -55,6 +62,13 @@ def main():
         '--no_feature',
         action='store_true',
         help='Boolean parameter to omit the additional features or not',
+    )
+    parser.add_argument(
+        '--seed',
+        default=42,
+        type=int,
+        required=False,
+        help='Random seed',
     )
     parser.add_argument(
         '--src_max_len',
@@ -92,13 +106,15 @@ def main():
     inputs, features, targets = do_preprocess(df_squad, args.lower, args.src_max_len, args.tgt_max_len)
     inputs_test, features_test, targets_test = do_preprocess(df_squad_test, args.lower, args.src_max_len, args.tgt_max_len)
 
-    inputs, features, targets = shuffle(inputs, features, targets)
-    inputs, features, targets, inputs_val, features_val, targets_val, = split_by_k(inputs, features, targets, k=0.8)
+    k = args.train_val_split
+    inputs, features, targets = shuffle(inputs, features, targets, seed=args.seed)
+    inputs, features, targets, inputs_val, features_val, targets_val, = split_by_k(inputs, features, targets, k=k)
     print('Train feature shape:', features.shape)
     print('Val feature shape:', features_val.shape)
 
     file_name = 'squad_id'
-    file_name += '_plain' if args.no_feature else ''
+    file_name += f'_split{args.train_val_split}'
+    file_name += '_nofeat' if args.no_feature else ''
     file_name += '_uncased' if args.lower else '_cased'
     dir_name = 'processed'
     create_data_file([(inputs, features, targets), (inputs_val, features_val, targets_val),
