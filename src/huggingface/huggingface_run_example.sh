@@ -44,7 +44,7 @@ python src/huggingface/run_language_modeling.py \
     --do_eval \
     --eval_data_file='data/processed/huggingface/val/sentence_pairs_spec_tokens.txt' \
     --per_gpu_train_batch_size 4 \
-    --num_train_epochs 3 \
+    --num_train_epochs 5 \
     --block_size 128
 
 # .................................................. TO CONTINUE TRAINING ..................................................
@@ -56,7 +56,7 @@ python src/huggingface/run_language_modeling.py \
 #================================================== INFERENCE ==================================================
 python src/huggingface/run_generation.py \
     --model_type=gpt2 \
-    --model_name_or_path='models/finetuned/gpt2' \
+    --model_name_or_path='models/finetuned/gpt2/gpt2_00X' \
     --length=100 --stop_token='</s>' \
     --num_return_sequences=1 \
     --num_beams=5 \
@@ -67,10 +67,16 @@ python src/huggingface/run_generation.py \
 python src/huggingface/separate_source_target.py --input_file_path='data/processed/huggingface/test/sentence_pairs_spec_tokens.txt'
 python src/huggingface/run_generation.py \
     --model_type=gpt2 \
-    --model_name_or_path='models/finetuned/gpt2/gpt2_003' \
+    --model_name_or_path='models/finetuned/gpt2/gpt2_00X' \
     --input_file_path='data/processed/huggingface/test/sentence_pairs_spec_tokens_source.txt' \
+    --output_file_path='reports/txts/huggingface/gpt2_00X_epoch_3_pred.txt' \
     --length=100 --stop_token='</s>' \
     --num_return_sequences=1 \
     --num_beams=5 \
     --temperature=0.1 \
     --no_repeat_ngram_size=2
+
+#================================================== EVALUATE ==================================================
+python src/huggingface/run_evaluation.py \
+    --target_file='data/processed/huggingface/test/sentence_pairs_spec_tokens_target.txt' \
+    --prediction_file='reports/txts/huggingface/gpt2_00X_epoch_3_pred.txt'
