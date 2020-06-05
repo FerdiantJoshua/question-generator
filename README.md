@@ -15,9 +15,7 @@ bagi tenaga pengajar
 
 ## Tujuan
 
-1.	Membangun **model dan arsitektur** untuk **sistem AQG** dengan menggunakan **deep learning** untuk **bahasa Indonesia**
-2.	Melakukan **eksperimen** pada pembangunan **sistem AQG** untuk **bahasa Indonesia** dengan pendekatan sequence to sequence dan
-pengembangannya
+Membangun sistem AQG untuk bahasa Indonesia dengan menggunakan **sequence to sequence**.
 
 ## Metodologi dan Rancangan Model *Deep Learning*
 
