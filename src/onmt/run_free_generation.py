@@ -15,7 +15,7 @@ def main():
         default='',
         type=str,
         required=False,
-        help='Path to the preprocessed input file. \
+        help='Path to the preprocessed input file, if you have already had one. \
              Do not provide --preprocess_output_path if you use this argument.',
     )
     parser.add_argument(
@@ -23,7 +23,7 @@ def main():
         default='',
         type=str,
         required=False,
-        help='Preprocessed paragraph will be saved under this path. \
+        help='Preprocessed paragraph will be saved under this path, if you want to provide new input. \
              Do not provide --preprocess_input_path if you use this argument',
     )
     parser.add_argument(
@@ -31,7 +31,13 @@ def main():
         default=False,
         action='store_true',
         help='Whether to input the NE and Pos Tag manually by hand, or provided by 3rd party Prosa.ai API. \
-             This argument is no use if you provide --preprocess_input_path',
+             This argument is not used if you provide --preprocess_input_path',
+    )
+    parser.add_argument(
+        '--uncased',
+        action='store_true',
+        help='Whether to lower the provided input or nont. \
+             This argument is not used if you provide --preprocess_input_path',
     )
     parser.add_argument(
         '--pred_output_path',
@@ -68,9 +74,10 @@ def main():
             or --preprocess_output_path (if you want to input the paragraph manually)'
         )
     
-    if args.preprocess_output_path:
+    if args.preprocess_input_path:
+        print('--preprocess_input_path parameter is provided. Will ignore --manual_ne_postag, and --uncased parameter')
         article = input('Enter the paragraph you would like to create the questions: ')    
-        prepare_featured_input(article, output_file_name=args.preprocess_output_path, manual_ne_postag=args.manual_ne_postag, seed=42)
+        prepare_featured_input(article, output_file_name=args.preprocess_output_path, manual_ne_postag=args.manual_ne_postag, lower=args.uncased, seed=42)
         preprocessed_file_path = args.preprocess_output_path
     else:
         preprocessed_file_path = args.preprocess_input_path

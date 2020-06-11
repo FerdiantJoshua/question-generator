@@ -65,7 +65,7 @@ def get_random_answer_loc(tokenized_input, entities, entity_chance=0.8, seed=42)
     return is_answer
 
 
-def prepare_featured_input(input_text, output_file_name='free_input.txt', manual_ne_postag=False, seed=42):
+def prepare_featured_input(input_text, output_file_name='free_input.txt', manual_ne_postag=False, lower=False, seed=42):
     is_answer_sents = []
     is_cased_sents = []
     if manual_ne_postag:
@@ -100,8 +100,10 @@ def prepare_featured_input(input_text, output_file_name='free_input.txt', manual
     features = np.concatenate((is_answer_sents, is_cased_sents, entity_sents, postag_sents), axis=1)
     with open(output_file_name, 'w', encoding='utf-8') as f_out:
         for i in range(len(tokenized_sents)):
-            f_out.write((print_input_along_feature(tokenized_sents[i], features[i]) + '\n').lower())
-
+            if lower:
+                f_out.write((print_input_along_feature(tokenized_sents[i], features[i]) + '\n').lower())
+            else:
+                f_out.write((print_input_along_feature(tokenized_sents[i], features[i]) + '\n'))
 
 def sent_tokenize(input_text):
     tokenized_sents = []
