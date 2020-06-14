@@ -74,12 +74,12 @@ def main():
             or --preprocess_output_path (if you want to input the paragraph manually)'
         )
     
-    if args.preprocess_input_path:
-        print('--preprocess_input_path parameter is provided. Will ignore --manual_ne_postag, and --uncased parameter')
+    if args.preprocess_output_path:
         article = input('Enter the paragraph you would like to create the questions: ')    
         prepare_featured_input(article, output_file_name=args.preprocess_output_path, manual_ne_postag=args.manual_ne_postag, lower=args.uncased, seed=42)
         preprocessed_file_path = args.preprocess_output_path
     else:
+        print('--preprocess_input_path parameter is provided. Will ignore --manual_ne_postag, and --uncased parameter')
         preprocessed_file_path = args.preprocess_input_path
 
     print('Generating questions...')

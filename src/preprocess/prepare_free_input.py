@@ -93,11 +93,22 @@ def prepare_featured_input(input_text, output_file_name='free_input.txt', manual
         is_cased_sents.append(is_cased)
 
     tokenized_sents = np.array(tokenized_sents)
+
+    # YES, DIRTY CODE. But have no choice to force the numpy to keep the input as array-of-list instead of pure array
+    is_answer_sents = np.array(is_answer_sents+[[]])[:-1]
+    is_cased_sents = np.array(is_cased_sents+[[]])[:-1]
+    entity_sents = np.array(entity_sents+[[]])[:-1]
+    postag_sents = np.array(postag_sents+[[]])[:-1]
+
     is_answer_sents = np.expand_dims(is_answer_sents, axis=-1)
     is_cased_sents = np.expand_dims(is_cased_sents, axis=-1)
     entity_sents = np.expand_dims(entity_sents, axis=-1)
     postag_sents = np.expand_dims(postag_sents, axis=-1)
-    features = np.concatenate((is_answer_sents, is_cased_sents, entity_sents, postag_sents), axis=1)
+
+    if lower:
+        features = np.concatenate((is_answer_sents, is_cased_sents, entity_sents, postag_sents), axis=-1)
+    else:
+        features = np.concatenate((is_answer_sents, entity_sents, postag_sents), axis=-1)
     with open(output_file_name, 'w', encoding='utf-8') as f_out:
         for i in range(len(tokenized_sents)):
             if lower:

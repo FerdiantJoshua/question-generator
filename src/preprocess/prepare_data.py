@@ -33,6 +33,13 @@ def delete_unfound_answers(df_squad):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        '--dataset_name',
+        default='squad_id',
+        type=str,
+        required=False,
+        help='THe prepared data will be saved with this name as a prefix',
+    )
+    parser.add_argument(
         '--train_squad_path',
         default='data/processed/train-v2.0-translated_fixed_enhanced.json',
         type=str,
@@ -112,7 +119,7 @@ def main():
     print('Train feature shape:', features.shape)
     print('Val feature shape:', features_val.shape)
 
-    file_name = 'squad_id'
+    file_name = args.dataset_name
     file_name += f'_split{args.train_val_split}'
     file_name += '_nofeat' if args.no_feature else ''
     file_name += '_uncased' if args.lower else '_cased'
