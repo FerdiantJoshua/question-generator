@@ -103,10 +103,15 @@ We use **SQuAD and TyDiQA** dataset, as well as **Uncased and Cased**.
 
 ## Training and Evaluation
 
-You can find all models' training and evaluation scripts in `src/onmt/config`.
+1. Create the directory to store prediction results
+    ```shell script
+    mkdir -p reports/txts/onmt
+    ```
+2. Then you can find all models' training and evaluation scripts in `src/onmt/config`.
 These scripts are not recommended to be directly executed, instead open it manually with text editor, and copy-paste them.
 
 We had prepared the configuration scripts to be as self-explanatory as possible.
+For complete OpenNMT preprocess/train/inference parameter, check the original [documentation](https://opennmt.net/OpenNMT-py/).
 
 ### Our Best Model Configuration Names
 
