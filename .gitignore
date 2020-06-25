@@ -76,6 +76,7 @@ old_experiments_*.jpg
 old_experiments_*.png
 
 ## Exceptions
+!**/requirements.txt
 !data/raw/**/raw
 !data/interim/**/interim
 !data/processed/**/processed
