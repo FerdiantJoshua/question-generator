@@ -54,7 +54,7 @@ def main():
     )
     parser.add_argument(
         '--beam_size',
-        default=5,
+        default=2,
         type=int,
         required=False,
         help='Beam size used while inferencing',
