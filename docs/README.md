@@ -20,7 +20,7 @@ Membangun sistem AQG untuk bahasa Indonesia dengan menggunakan pendekatan **sequ
 
 ## Pustaka
 
-PyTorch dan OpenNMT
+[PyTorch](https://github.com/pytorch/pytorch) dan [OpenNMT](https://github.com/OpenNMT/)
 
 ## Metodologi dan Rancangan Model *Deep Learning*
 
@@ -84,7 +84,7 @@ Hasil terbaik diperoleh model _BiGRU-Uncased-Copy-Coverage_
 
 ## Hasil
 
-* Pada _dataset_ SQuAD v2.0
+### Pada _dataset_ SQuAD v2.0
 
 | Model pada SQuAD v2.0 | BLEU-1  | BLEU-2  | BLEU-3  | BLEU-4  | ROUGE-L | Epoch |
 |-----------------------|---------|---------|---------|---------|---------|-------|
@@ -108,7 +108,7 @@ Hasil terbaik diperoleh model _BiGRU-Uncased-Copy-Coverage_
 | Uncased               |  32,03  |  13,59  |  4,7    |  1,72   |  35,91  |  300  |
 | Uncased-Copy          |**38,14**|**20,57**|**10,16**|**5,38** |**42,37**|  300  |
 
-* Pada _dataset_ TyDiQA
+### Pada _dataset_ TyDiQA
 
 | Model pada TyDiQA     | BLEU-1  | BLEU-2  | BLEU-3  | BLEU-4  | ROUGE-L | Epoch |
 |-----------------------|---------|---------|---------|---------|---------|-------|
@@ -146,7 +146,7 @@ Hasil terbaik diperoleh model _BiGRU-Uncased-Copy-Coverage_
 
 ## Hasil Inferensi
 
-* Pada _dataset_ SQuAD v2.0
+### Pada _dataset_ SQuAD v2.0
 
 | Keterangan            | Kalimat                                                                                                                                                                                                                                                                    |
 |-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -221,7 +221,7 @@ Hasil terbaik diperoleh model _BiGRU-Uncased-Copy-Coverage_
 | Uncased-Copy          | di mana celoron berada ?                                                                                                                                                                                                                                                   |
 |                       |                                                                                                                                                                                                                                                                            |
 
-* Pada _dataset_ TyDiQA
+### Pada _dataset_ TyDiQA
 
 | Keterangan            | Kalimat                                                                                                                                                                                                                                                                             |
 |-----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
