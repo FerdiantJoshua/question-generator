@@ -43,15 +43,31 @@ onmt_train -data 'data/processed/onmt/squad_id_split0.9_cased' -save_model 'mode
     -coverage_attn
 
 #================================================== TRANSLATE ==================================================
+#-------------------------------------------------- SQUAD --------------------------------------------------
 onmt_translate -model 'models/checkpoints/onmt/gru_033_step_32100.pt' \
     -src 'data/processed/test/squad_id_split0.9_cased_source.txt' -output 'reports/txts/onmt/gru_033_step_32100_pred.txt' -replace_unk \
     -seed 42 \
     -beam_size 5 \
     -max_length 20
 
+#-------------------------------------------------- TYDIQA --------------------------------------------------
+onmt_translate -model 'models/checkpoints/onmt/gru_033_step_32100.pt' \
+    -src 'data/processed/test/tydiqa_id_split0.9_cased_source.txt' -output 'reports/txts/onmt/gru_033_step_32100_pred_tydiqa.txt' -replace_unk \
+    -seed 42 \
+    -beam_size 5 \
+    -max_length 20
+
 #================================================== EVALUATE ==================================================
+#-------------------------------------------------- SQUAD --------------------------------------------------
 python src/onmt/run_evaluation.py \
     --source_file='data/processed/test/squad_id_split0.9_cased_source.txt' \
     --target_file='data/processed/test/squad_id_split0.9_cased_target.txt' \
     --prediction_file='reports/txts/onmt/gru_033_step_32100_pred.txt' \
     --log_file='reports/txts/onmt/eval_log_gru_033_step_32100.txt'
+
+#-------------------------------------------------- TYDIQA --------------------------------------------------
+python src/onmt/run_evaluation.py \
+    --source_file='data/processed/test/tydiqa_id_split0.9_cased_source.txt' \
+    --target_file='data/processed/test/tydiqa_id_split0.9_cased_target.txt' \
+    --prediction_file='reports/txts/onmt/gru_033_step_32100_pred_tydiqa.txt' \
+    --log_file='reports/txts/onmt/eval_log_gru_033_step_32100_tydiqa.txt'

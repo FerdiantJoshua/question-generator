@@ -35,15 +35,30 @@ onmt_train -data 'data/processed/onmt/squad_id_split0.9_cased_copy' -save_model 
     -copy_attn_force
 
 #================================================== TRANSLATE ==================================================
+#-------------------------------------------------- SQUAD --------------------------------------------------
 onmt_translate -model 'models/checkpoints/onmt/transformer_012_step_120600.pt' \
     -src 'data/processed/test/squad_id_split0.9_cased_source.txt' -output 'reports/txts/onmt/transformer_012_step_120600_pred.txt' -replace_unk \
     -seed 42 \
     -beam_size 5 \
     -max_length 20
+#-------------------------------------------------- TYDIQA --------------------------------------------------
+onmt_translate -model 'models/checkpoints/onmt/transformer_012_step_120600.pt' \
+    -src 'data/processed/test/tydiqa_id_split0.9_cased_source.txt' -output 'reports/txts/onmt/transformer_012_step_120600_pred_tydiqa.txt' -replace_unk \
+    -seed 42 \
+    -beam_size 5 \
+    -max_length 20
 
 #================================================== EVALUATE ==================================================
+#-------------------------------------------------- SQUAD --------------------------------------------------
 python src/onmt/run_evaluation.py \
     --source_file='data/processed/test/squad_id_split0.9_cased_source.txt' \
     --target_file='data/processed/test/squad_id_split0.9_cased_target.txt' \
     --prediction_file='reports/txts/onmt/transformer_012_step_120600_pred.txt' \
     --log_file='reports/txts/onmt/eval_log_transformer_012_step_120600.txt'
+
+#-------------------------------------------------- TYDIQA --------------------------------------------------
+python src/onmt/run_evaluation.py \
+    --source_file='data/processed/test/tydiqa_id_split0.9_cased_source.txt' \
+    --target_file='data/processed/test/tydiqa_id_split0.9_cased_target.txt' \
+    --prediction_file='reports/txts/onmt/transformer_012_step_120600_pred_tydiqa.txt' \
+    --log_file='reports/txts/onmt/eval_log_transformer_012_step_120600_tydiqa.txt'

@@ -40,15 +40,31 @@ onmt_train -data 'data/processed/onmt/squad_id_split0.9_uncased' -save_model 'mo
     -dropout 0.3
 
 #================================================== TRANSLATE ==================================================
+#-------------------------------------------------- SQUAD --------------------------------------------------
 onmt_translate -model 'models/checkpoints/onmt/lstm_040_step_16050.pt' \
     -src 'data/processed/test/squad_id_split0.9_uncased_source.txt' -output 'reports/txts/onmt/lstm_040_step_16050_pred.txt' -replace_unk \
     -seed 42 \
     -beam_size 5 \
     -max_length 20
 
+#-------------------------------------------------- TYDIQA --------------------------------------------------
+onmt_translate -model 'models/checkpoints/onmt/lstm_040_step_16050.pt' \
+    -src 'data/processed/test/tydiqa_id_split0.9_uncased_source.txt' -output 'reports/txts/onmt/lstm_040_step_16050_pred_tydiqa.txt' -replace_unk \
+    -seed 42 \
+    -beam_size 5 \
+    -max_length 20
+
 #================================================== EVALUATE ==================================================
+#-------------------------------------------------- SQUAD --------------------------------------------------
 python src/onmt/run_evaluation.py \
     --source_file='data/processed/test/squad_id_split0.9_uncased_source.txt' \
     --target_file='data/processed/test/squad_id_split0.9_uncased_target.txt' \
     --prediction_file='reports/txts/onmt/lstm_040_step_16050_pred.txt' \
     --log_file='reports/txts/onmt/eval_log_lstm_040_step_16050.txt'
+
+#-------------------------------------------------- TYDIQA --------------------------------------------------
+python src/onmt/run_evaluation.py \
+    --source_file='data/processed/test/tydiqa_id_split0.9_uncased_source.txt' \
+    --target_file='data/processed/test/tydiqa_id_split0.9_uncased_target.txt' \
+    --prediction_file='reports/txts/onmt/lstm_040_step_16050_pred_tydiqa.txt' \
+    --log_file='reports/txts/onmt/eval_log_lstm_040_step_16050_tydiqa.txt'
