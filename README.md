@@ -11,10 +11,10 @@ And finally, this README only covers our best models - RNN-based and Transformer
 ## Architecture
 
 ### BiRNN (BiLSTM dan BiGRU)
-![rnn_architecture](docs/img/RNN Architecture.png)
+![rnn_architecture](docs/img/RNNArchitecture.png)
 
 ### Transformer  
-![transformer_architecture](docs/img/Transformer Architecture.png)
+![transformer_architecture](docs/img/TransformerArchitecture.png)
 
 ## Requirements
 
