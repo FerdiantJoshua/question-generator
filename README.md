@@ -1,6 +1,7 @@
 # Sequence-to-Sequence Learning for Indonesian Automatic Question Generator (AQG)
 
 A deep-learning-based Indonesian AQG built using Google-translated SQuAD v2.0 dataset.
+Our research paper [here]().
 
 This research uses mainly [OpenNMT](https://github.com/OpenNMT/) library for training and inference.
 
@@ -107,7 +108,7 @@ These scripts are not recommended to be directly executed, instead open it manua
 
 We had prepared the configuration scripts to be as self-explanatory as possible.
 
-### Our Best Models' Numbers
+### Our Best Model Configuration Names
 
 We keep all model configurations. Some configurations resulting the best models defined in our paper are:
 
