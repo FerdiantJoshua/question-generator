@@ -1,6 +1,8 @@
 # Implementasi *Deep Learning* dengan *Sequence to Sequence* untuk Sistem Pembangkit Pertanyaan Otomatis
 
-Oleh: Ferdiant Joshua Muis - 13516047
+**Oleh:**
+1. Ferdiant Joshua Muis - 13516047 (Institut Teknologi Bandung)
+2. Dr. Eng. Ayu Purwarianti, ST.,MT. (Institut Teknologi Bandung & U-CoE AI-VLB)
 
 ## Ikhtisar
 

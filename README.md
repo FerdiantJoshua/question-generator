@@ -1,7 +1,9 @@
 # Sequence-to-Sequence Learning for Indonesian Automatic Question Generator (AQG)
 
+_(*For README in Indonesian, refer to [this one instead](docs/README.md))_
+
 A deep-learning-based Indonesian AQG built using Google-translated SQuAD v2.0 dataset.
-Our research paper [here]().
+Our research paper [here](https://arxiv.org/abs/2009.13889).
 
 This research uses mainly [OpenNMT](https://github.com/OpenNMT/) library for training and inference.
 
@@ -22,7 +24,7 @@ And finally, this README only covers our best models - RNN-based and Transformer
 pip install -r requirements.txt
 ```
 
-*This requirements do not cover huggingface library either.
+*These requirements do not cover huggingface library either.
 
 ## Download Datasets
 
@@ -32,14 +34,15 @@ Put the downloaded processed dataset in `data/processed`.
  However I also provide link to the original dataset. Put them in `data/raw` for this original dataset.
 
 1. SQuAD v2.0:
-    1. Processed (translated, augmented with linguistic features): [TBD]()
+    1. Processed (translated, augmented with linguistic features): [processed train & dev set](https://drive.google.com/drive/folders/16AuXmEzxRgenc4JOdA5mhO_I0eCSg6Z7?usp=sharing)
     2. Original SQuAD v2.0: [train set](https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v2.0.json), [dev set](https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v2.0.json)
 2. TyDiQA GoldPassage:
-    1. Processed (Indonesian only [this script only runs in Linux-based terminal]):
+    1. Processed (translated, augmented with linguistic features): [processed train & dev set](https://drive.google.com/drive/folders/16AuXmEzxRgenc4JOdA5mhO_I0eCSg6Z7?usp=sharing) 
+    2. Indonesian only [this script only runs in Linux-based terminal]:
         ```shell script
         python src/data/download_tydiqa_goldpassage_indonesian.py
         ```
-    2. Original TyDiQA GoldPassage [All language](https://storage.googleapis.com/tydiqa/v1.1/tydiqa-goldp-v1.1-train.json)
+    3. Original TyDiQA GoldPassage [All language](https://storage.googleapis.com/tydiqa/v1.1/tydiqa-goldp-v1.1-train.json)
 
 ## Notebooks
 
@@ -76,13 +79,13 @@ We use **SQuAD and TyDiQA** dataset, as well as **Uncased and Cased**.
             --lower
             --seed 42
         ```
-2. TyDiQA GoldPassage (we finally only used the _dev set_)
+2. TyDiQA GoldPassage (we finally only used the _dev set_ [the ones generated and stored in `data/processed/test/tydiqa_id*`])
     1. Cased
         ```shell script
         python src/preprocess/prepare_data.py \
             --dataset_name=tydiqa_id \
-            --train_squad_path=data/processed/train-v2.0-translated_fixed_enhanced.json \
-            --dev_squad_path=data/processed/train-v2.0-translated_fixed_enhanced.json \
+            --train_squad_path=data/processed/tydiqa-goldp-v1.1-train-indonesian_prepared_enhanced.json \
+            --dev_squad_path=data/processed/tydiqa-goldp-v1.1-dev-indonesian_prepared_enhanced.json \
             --train_val_split=0.9 \
             --src_max_len=70 \
             --tgt_max_len=20 \
@@ -100,6 +103,9 @@ We use **SQuAD and TyDiQA** dataset, as well as **Uncased and Cased**.
             --lower
             --seed 42
         ```
+
+After executing these four scripts, you will have 8 files in each of `data/processed/[train|val|test]` directories with name:
+- `[squad|tydiqa]_id_split0.9_[uncased|cased]_[source|target].txt`
 
 ## Training and Evaluation
 
@@ -147,12 +153,12 @@ You can find all logs in:
 
 ### Running Free-input Question Generation
 
-Currently these models heavily dependent on third party ([Prosa.ai](https://prosa.ai)) API for POS Tag and NE.
+Currently these models are heavily dependent on third party API from [Prosa.ai](https://prosa.ai) for POS (Part of Speech) and NE (Named Entity).
 
-There are some provided scripts to run the free-input generation, but the API is not publicly accessible.  
-**You are unable to use free-input to the model.**
+There are some provided scripts to run the free-input generation, but as the API is not publicly accessible,  
+**you are unable to use free-text input to generate questions.**
 
-If you have access however, you would be able to execute this script:
+If you have access however, you will be able to execute this script:
 ```shell script
 python src/onmt/run_free_generation.py \
     --preprocess_output_path=free_input_001.txt \
@@ -161,3 +167,8 @@ python src/onmt/run_free_generation.py \
     --model_path=model/final/gru_037_step_16050.pt \
     --beam_size=2
 ```
+
+## Authors
+
+1. Ferdiant Joshua Muis (Institut Teknologi Bandung)
+2. Dr. Eng. Ayu Purwarianti, ST.,MT. (Institut Teknologi Bandung & U-CoE AI-VLB)
