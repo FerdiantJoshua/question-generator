@@ -44,9 +44,18 @@ Put the downloaded processed dataset in `data/processed`.
         ```
     3. Original TyDiQA GoldPassage [All language](https://storage.googleapis.com/tydiqa/v1.1/tydiqa-goldp-v1.1-train.json)
 
+## Download Word Embeddings
+
+All models in this research utilize Indonesian part of [Fastext's word vector for 157 languages.](https://fasttext.cc/docs/en/crawl-vectors.html).
+This word embedding is converted to GloVe format as OpenNMT only support GloVe-formatted word embedding.
+
+You can download the converted GloVe-formatted Fasttext word embedding [here](https://drive.google.com/file/d/1yD5nFsw8vMjCq90chROyAL0kGzPxFVMY/view).
+
+Then put the word-embedding in `models/word-embedding/ft_to_gl_300_id.vec`.
+
 ## Notebooks
 
-All notebooks are stored in `notebook` directory, and was mainly used for **data and method exploration**.
+All notebooks are stored in `notebook` directory, and were mainly used for **data and method exploration**.
 You **can** ignore these notebooks if you seek to reproduce the models. 
 
 ## Prepare Data 
@@ -114,7 +123,7 @@ After executing these four scripts, you will have 8 files in each of `data/proce
     mkdir -p reports/txts/onmt
     ```
 2. Then you can find all models' training and evaluation scripts in `src/onmt/config`.
-These scripts are not recommended to be directly executed, instead open it manually with text editor, and copy-paste them.
+These scripts are not recommended to be directly executed, instead open them manually with a text editor, and copy-paste them.
 
 We had prepared the configuration scripts to be as self-explanatory as possible.
 For complete OpenNMT preprocess/train/inference parameter, check the original [documentation](https://opennmt.net/OpenNMT-py/).
@@ -136,9 +145,9 @@ We keep all model configurations. Some configurations resulting the best models 
 | Cased                 | lstm_44            |
 | Cased-Copy            | lstm_45            |
 | Cased-Copy-Coverage   | lstm_32            |
-| Uncased               | gru_40             |
-| Uncased-Copy          | gru_38             |
-| Uncased-Copy-Coverage | gru_36             |
+| Uncased               | lstm_40            |
+| Uncased-Copy          | lstm_38            |
+| Uncased-Copy-Coverage | lstm_36            |
 | **Transformer-3**     |                    |
 | Cased                 |  transformer_11    |
 | Cased-Copy            |  transformer_12    |
