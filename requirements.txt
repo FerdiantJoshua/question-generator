@@ -28,5 +28,5 @@ smart-open==1.9.0
 torch==1.4.0
 torchvision==0.5.0
 Unidecode==1.1.1
-urllib3==1.25.8
+urllib3==1.26.5
 git+https://github.com/Maluuba/nlg-eval.git@master
