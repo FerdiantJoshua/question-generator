@@ -3,7 +3,10 @@
 _(*For README in Indonesian, refer to [this one instead](docs/README.md))_
 
 A deep-learning-based Indonesian AQG built using Google-translated SQuAD v2.0 dataset.
-Our research paper [here](https://arxiv.org/abs/2009.13889).
+Our research paper here:
+
+1. [IEEE](https://ieeexplore.ieee.org/document/9429032)
+2. [arXiv](https://arxiv.org/abs/2009.13889)
 
 This research uses mainly [OpenNMT](https://github.com/OpenNMT/) library for training and inference.
 
